@@ -24,7 +24,7 @@ with open("DK_SC/DK_SC.pkl", "rb") as f:
 labels = sc.region_labels
 to_delete_ctx = []
 for i, lab in enumerate(labels):
-    if not lab.startswith('ctx-') or "caudalmiddlefrontal" in lab:
+    if not lab.startswith('ctx-'):
         to_delete_ctx.append(i)
 
 labels = np.delete(labels, to_delete_ctx)
