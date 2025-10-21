@@ -54,6 +54,8 @@ def run_simulation(config):
         config.bold_period, config.offset_time
     )
 
+    print(r)
+
     res = {
         "G": config.G,
         "sigma": config.sigma,

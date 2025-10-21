@@ -34,8 +34,8 @@ target_fc = target_fc[:66, :66]
 
 def explore(G, sigma, simulation_length=585e3, sim_dt=0.5, bold_period=2250, offset_time=60e3):
 
-    sim.model.G = np.array([15])
-    sim.integrator.noise = noise.Additive(nsig=np.array([5e-6]))
+    sim.model.G = np.array([G])
+    sim.integrator.noise = noise.Additive(nsig=np.array([sigma]))
 
     sim.simulation_length = simulation_length
     sim.integrator.dt = sim_dt
