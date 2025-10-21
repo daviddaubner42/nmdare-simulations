@@ -2,9 +2,9 @@
 
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
-#SBATCH --mem=4G
+#SBATCH --mem=8G
 #SBATCH --partition=short
-#SBATCH --time=00:05:00
+#SBATCH --time=01:00:00
 #SBATCH --constraint=broadwell
 #SBATCH --output=output_files/%a.out
 echo "Start of simulation: $(date)"
