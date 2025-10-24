@@ -15,11 +15,28 @@ def FCuCorrelation(FC1, FC2, fisher=True):
     FC_corr_upper = np.corrcoef(FCu1, FCu2)[0, 1]
     return FC_corr_upper
 
-with open("TVB_input/tumor_SC.pkl", "rb") as f:
+# with open("TVB_input/tumor_SC.pkl", "rb") as f:
+#     sc = pickle.load(f)
+
+with open("DK_SC/DK_SC.pkl", "rb") as f:
     sc = pickle.load(f)
 
-# with open("DK_SC/DK_SC.pkl", "rb") as f:
-#     sc = pickle.load(f)
+labels = sc.region_labels
+to_delete_ctx = []
+for i, lab in enumerate(labels):
+    if not lab.startswith('ctx-'):
+        to_delete_ctx.append(i)
+
+labels = np.delete(labels, to_delete_ctx)
+sc.region_labels = labels
+weights = sc.weights
+weights = np.delete(weights, to_delete_ctx, 0)
+weights = np.delete(weights, to_delete_ctx, 1)
+sc.weights = weights
+tls = sc.tract_lengths
+tls = np.delete(tls, to_delete_ctx, 0)
+tls = np.delete(tls, to_delete_ctx, 1)
+sc.tract_lengths = tls
 sc.configure()
 
 model = models.ReducedWongWangExcInh()
@@ -28,9 +45,9 @@ sim = simulator.Simulator(
     model=model,
     connectivity=sc,
     coupling=coupling.Linear(a=np.array([1.])),
-    integrator=integrators.HeunStochastic(dt=0.5),
-    monitors=(monitors.Raw(), monitors.Bold(period=2250)),
-    simulation_length=300e3
+    integrator=integrators.HeunStochastic(dt=1),
+    monitors=(monitors.Raw(), monitors.Bold(period=500)),
+    simulation_length=60e3
 ).configure()
 
 target_fc = np.loadtxt("FCs/avg_hc_fc.csv", delimiter=',')
