@@ -15,11 +15,11 @@ def FCuCorrelation(FC1, FC2, fisher=True):
     FC_corr_upper = np.corrcoef(FCu1, FCu2)[0, 1]
     return FC_corr_upper
 
-# with open("TVB_input/tumor_SC.pkl", "rb") as f:
-#     sc = pickle.load(f)
-
-with open("DK_SC/DK_SC.pkl", "rb") as f:
+with open("TVB_input/tumor_SC.pkl", "rb") as f:
     sc = pickle.load(f)
+
+# with open("DK_SC/DK_SC.pkl", "rb") as f:
+#     sc = pickle.load(f)
 sc.configure()
 
 model = models.ReducedWongWangExcInh()
@@ -57,33 +57,38 @@ def explore(G, sigma, simulation_length=585e3, sim_dt=0.5, bold_period=2250, off
             to_remove.append(i)
 
     ts = np.delete(ts, to_remove, axis=1)
+    
+    target_fc = np.loadtxt("FCs/avg_hc_fc.csv", delimiter=',')
+    target_fc = np.delete(target_fc, to_remove, axis=0)
+    target_fc = np.delete(target_fc, to_remove, axis=1)
+    target_fc = target_fc[:66, :66]
 
-    labels = sc.region_labels
-    labels = np.delete(labels, to_remove)
-    for i, lab in enumerate(labels):
-        if "ctx" in lab:
-            _, hemi, name = lab.split('-')
-            labels[i] = f"{hemi}_{name}"
-        else:
-            labels[i] = lab.upper()
-        if "THALAMUS" in labels[i]:
-            hemi, name = labels[i].split('-')
-            labels[i] = f"{hemi}-{name}-PROPER"
+    # labels = sc.region_labels
+    # labels = np.delete(labels, to_remove)
+    # for i, lab in enumerate(labels):
+    #     if "ctx" in lab:
+    #         _, hemi, name = lab.split('-')
+    #         labels[i] = f"{hemi}_{name}"
+    #     else:
+    #         labels[i] = lab.upper()
+    #     if "THALAMUS" in labels[i]:
+    #         hemi, name = labels[i].split('-')
+    #         labels[i] = f"{hemi}-{name}-PROPER"
             
-    with open("resources/network_labels.pkl", "rb") as f:
-        network_labels = pickle.load(f)
-    to_delete_nl = []
-    for i, lab in enumerate(network_labels):
-        if "VENTRALDC" in lab:
-            to_delete_nl.append(i)
-    network_labels = np.delete(network_labels, to_delete_nl)
-    transform = {}
-    for i, lab in enumerate(network_labels):
-        transform[i] = np.where(labels == lab)
-    new_ts = np.zeros_like(ts)
-    for i in range(len(labels)):
-        new_ts[:, i] = ts[:, transform[i]].squeeze()
-    ts = new_ts
+    # with open("resources/network_labels.pkl", "rb") as f:
+    #     network_labels = pickle.load(f)
+    # to_delete_nl = []
+    # for i, lab in enumerate(network_labels):
+    #     if "VENTRALDC" in lab:
+    #         to_delete_nl.append(i)
+    # network_labels = np.delete(network_labels, to_delete_nl)
+    # transform = {}
+    # for i, lab in enumerate(network_labels):
+    #     transform[i] = np.where(labels == lab)
+    # new_ts = np.zeros_like(ts)
+    # for i in range(len(labels)):
+    #     new_ts[:, i] = ts[:, transform[i]].squeeze()
+    # ts = new_ts
 
     fc = np.corrcoef(ts, rowvar=False)
     fc[fc == 1] = 0.9999999
