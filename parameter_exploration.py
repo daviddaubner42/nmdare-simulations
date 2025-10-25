@@ -4,6 +4,7 @@ from tvb.simulator.lab import *
 import pickle
 import os
 import pandas as pd
+from scipy.stats import kstest
 
 def FCuCorrelation(FC1, FC2, fisher=True):
     u_idx = np.triu_indices_from(FC1, k=1)
@@ -46,12 +47,12 @@ sim = simulator.Simulator(
     connectivity=sc,
     coupling=coupling.Linear(a=np.array([1.])),
     integrator=integrators.HeunStochastic(dt=1),
-    monitors=(monitors.Raw(), monitors.Bold(period=500)),
-    simulation_length=60e3
+    monitors=(monitors.Raw(), monitors.Bold(period=2250)),
+    simulation_length=585e3
 ).configure()
 
-target_fc = np.loadtxt("FCs/avg_hc_fc.csv", delimiter=',')
-target_fc = target_fc[:66, :66]
+with open("FCDs/hc_hists.csv", "rb") as f:
+    hc_hists = pickle.load(f)
 
 def explore(G, sigma, simulation_length=585e3, sim_dt=0.5, bold_period=2250, offset_time=60e3):
 
@@ -76,7 +77,22 @@ def explore(G, sigma, simulation_length=585e3, sim_dt=0.5, bold_period=2250, off
 
     ts = np.delete(ts, to_remove, axis=1)
 
-    fc = np.corrcoef(ts, rowvar=False)
-    fc[fc == 1] = 0.9999999
+    window_size = 30
+    step_size = 1
 
-    return FCuCorrelation(fc, target_fc)
+    all_fcs = []
+    for i in range(0, ts.shape[0] - window_size, step_size):
+        window_ts = ts[i:i + window_size, :]
+
+        fc = np.corrcoef(window_ts, rowvar=False)
+        fc[fc == 1] = 0.9999999
+        all_fcs.append(fc)
+
+    n_wins = len(all_fcs)
+    FCD = np.zeros((n_wins, n_wins))
+    for i in range(n_wins):
+        for j in range(n_wins):
+            FCD[i, j] = FCuCorrelation(all_fcs[i], all_fcs[j], fisher=True)
+    hist = np.histogram(FCD, 100)[0]
+
+    return kstest(hist, np.array(hc_hists).mean(axis=0)).statistic
