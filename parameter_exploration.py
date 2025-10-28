@@ -53,8 +53,7 @@ sim = simulator.Simulator(
 
 # with open("FCDs/hc_hists.csv", "rb") as f:
 #     hc_hists = pickle.load(f)
-with open("FCDs/LEGK010/hist.csv", "rb") as f:
-    hc_hists = pickle.load(f)
+hc_hists = np.loadtxt("FCDs/LEGK010/hist.csv", delimiter=',')
 
 def explore(G, sigma, simulation_length=585e3, sim_dt=0.5, bold_period=2250, offset_time=60e3):
 
