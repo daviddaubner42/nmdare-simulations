@@ -53,7 +53,10 @@ sim = simulator.Simulator(
 target_fc = np.loadtxt("FCs/avg_hc_fc.csv", delimiter=',')
 target_fc = target_fc[:66, :66]
 
-def explore(G, sigma, tau_e, tau_i, simulation_length=585e3, sim_dt=0.5, bold_period=2250, offset_time=60e3):
+def explore(subid, G, sigma, tau_e, tau_i, simulation_length=585e3, sim_dt=0.5, bold_period=2250, offset_time=60e3):
+
+    target_fc = np.loadtxt(f"FCs/sub-{subid}/FC.csv", delimiter=',')
+    target_fc = target_fc[:66, :66]
 
     sim.model.G = np.array([G])
     sim.model.tau_e = np.array([tau_e])
