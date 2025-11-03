@@ -70,15 +70,15 @@ def explore(G, sigma, tau_e, tau_i, simulation_length=585e3, sim_dt=0.5, bold_pe
 
     offset = int(offset_time // bold_period)
     ts = boldd[offset:, 0, :, 0]
+    
+    to_remove = []
+    for i, lab in enumerate(sc.region_labels):
+        if "caudalmiddlefrontal" in lab:
+            to_remove.append(i)
+
+    ts = np.delete(ts, to_remove, axis=1)
 
     fc = np.corrcoef(ts, rowvar=False)
     fc[fc == 1] = 0.9999999
     
-    # to_remove = []
-    # for i, lab in enumerate(sc.region_labels):
-    #     if "caudalmiddlefrontal" in lab:
-    #         to_remove.append(i)
-
-    # ts = np.delete(ts, to_remove, axis=1)
-
     return fc
