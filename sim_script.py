@@ -22,8 +22,6 @@ def get_config():
     cmd_parameters.append(["sigma", 0.01, float])
     cmd_parameters.append(["tau_e", 100.0, float])
     cmd_parameters.append(["tau_i", 10.0, float])
-    
-    cmd_parameters.append(["subid", "sub", str])
 
     cmd_parameters.append(["sim_length", 600e3, float]) 
     cmd_parameters.append(["sim_dt", 0.5, float])
@@ -51,33 +49,29 @@ def run_simulation(config):
 
     # simulation code goes here
     # print(f'run_simulation({config.G}, {config.sigma})')
-    print(f'run_simulation({config.subid}, {config.tau_e}, {config.tau_i})')
+    print(f'run_simulation({config.subid}, {config.G}, {config.sigma})')
     # part_fname = f"G_{config.G:.6f}_sigma_{config.sigma:.6f}_J_N_{config.J_N:.6f}_J_i_{config.J_i:.6f}"
     part_fname = f"G_{config.G}_sigma_{config.sigma}"
     # part_fname = f"subid_{config.subid}_tau_e_{config.tau_e}_tau_i_{config.tau_i}"
 
-    r = explore(
-        config.subid,
+    fc = explore(
         config.G, config.sigma, config.tau_e, config.tau_i,
         config.sim_length, config.sim_dt, 
         config.bold_period, config.offset_time
     )
 
-    print(r)
-
     res = {
-        "subid": config.subid,
         "G": config.G,
         "sigma": config.sigma,
         "tau_e": config.tau_e,
         "tau_i": config.tau_i,
-        "r": r
+        "FC": fc
     }
 
-    print(f'r = {r:.4f}')
+    # print(f'r = {r:.4f}')
     print(f'saving: RWW_result_{part_fname}')
-    os.makedirs(f'out/sub-{config.subid}', exist_ok=True)
-    with open(f'out/sub-{config.subid}/RWW_result_{part_fname}.pkl', 'wb') as f:
+    os.makedirs(f'out', exist_ok=True)
+    with open(f'out/RWW_result_{part_fname}.pkl', 'wb') as f:
         pickle.dump(res, f)
 
     print(f"Simulation finished in {timer() - tstart} seconds")

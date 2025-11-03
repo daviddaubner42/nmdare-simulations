@@ -50,13 +50,10 @@ sim = simulator.Simulator(
     simulation_length=60e3
 ).configure()
 
-target_fc = np.loadtxt("FCs/avg_hc_fc.csv", delimiter=',')
-target_fc = target_fc[:66, :66]
+# target_fc = np.loadtxt("FCs/avg_hc_fc.csv", delimiter=',')
+# target_fc = target_fc[:66, :66]
 
-def explore(subid, G, sigma, tau_e, tau_i, simulation_length=585e3, sim_dt=0.5, bold_period=2250, offset_time=60e3):
-
-    target_fc = np.loadtxt(f"FCs/sub-{subid}/FC.csv", delimiter=',')
-    target_fc = target_fc[:66, :66]
+def explore(G, sigma, tau_e, tau_i, simulation_length=585e3, sim_dt=0.5, bold_period=2250, offset_time=60e3):
 
     sim.model.G = np.array([G])
     sim.model.tau_e = np.array([tau_e])
@@ -74,14 +71,14 @@ def explore(subid, G, sigma, tau_e, tau_i, simulation_length=585e3, sim_dt=0.5, 
     offset = int(offset_time // bold_period)
     ts = boldd[offset:, 0, :, 0]
 
-    to_remove = []
-    for i, lab in enumerate(sc.region_labels):
-        if "caudalmiddlefrontal" in lab:
-            to_remove.append(i)
-
-    ts = np.delete(ts, to_remove, axis=1)
-
     fc = np.corrcoef(ts, rowvar=False)
     fc[fc == 1] = 0.9999999
+    
+    # to_remove = []
+    # for i, lab in enumerate(sc.region_labels):
+    #     if "caudalmiddlefrontal" in lab:
+    #         to_remove.append(i)
 
-    return FCuCorrelation(fc, target_fc)
+    # ts = np.delete(ts, to_remove, axis=1)
+
+    return fc
