@@ -27,17 +27,17 @@ for i, lab in enumerate(labels):
     if not lab.startswith('ctx-'):
         to_delete_ctx.append(i)
 
-labels = np.delete(labels, to_delete_ctx)
-sc.region_labels = labels
-weights = sc.weights
-weights = np.delete(weights, to_delete_ctx, 0)
-weights = np.delete(weights, to_delete_ctx, 1)
-sc.weights = weights
-tls = sc.tract_lengths
-tls = np.delete(tls, to_delete_ctx, 0)
-tls = np.delete(tls, to_delete_ctx, 1)
-sc.tract_lengths = tls
-sc.configure()
+# labels = np.delete(labels, to_delete_ctx)
+# sc.region_labels = labels
+# weights = sc.weights
+# weights = np.delete(weights, to_delete_ctx, 0)
+# weights = np.delete(weights, to_delete_ctx, 1)
+# sc.weights = weights
+# tls = sc.tract_lengths
+# tls = np.delete(tls, to_delete_ctx, 0)
+# tls = np.delete(tls, to_delete_ctx, 1)
+# sc.tract_lengths = tls
+# sc.configure()
 
 model = models.ReducedWongWangExcInh()
 
@@ -80,5 +80,5 @@ def explore(G, sigma, tau_e, tau_i, simulation_length=585e3, sim_dt=0.5, bold_pe
 
     fc = np.corrcoef(ts, rowvar=False)
     fc[fc == 1] = 0.9999999
-    
+
     return fc
