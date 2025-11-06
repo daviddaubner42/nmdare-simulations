@@ -72,43 +72,50 @@ def explore(G, sigma, tau_e, tau_i, simulation_length=585e3, sim_dt=0.5, bold_pe
     ts = boldd[offset:, 0, :, 0]
     
     # ----------------------------------------------
-    labels = sc.region_labels
+    # labels = sc.region_labels
 
-    new_labels = labels.tolist()
-    for i, lab in enumerate(new_labels):
-        if "ctx" in lab:
-            _, hemi, name = lab.split('-')
-            new_labels[i] = f"{hemi}_{name}"
-        else:
-            new_labels[i] = lab.upper()
-    new_labels = np.array(new_labels)
+    # new_labels = labels.tolist()
+    # for i, lab in enumerate(new_labels):
+    #     if "ctx" in lab:
+    #         _, hemi, name = lab.split('-')
+    #         new_labels[i] = f"{hemi}_{name}"
+    #     else:
+    #         new_labels[i] = lab.upper()
+    # new_labels = np.array(new_labels)
 
-    to_delete_sc = []
-    for i, lab in enumerate(new_labels):
-        if "caudalmiddlefrontal" in lab:
-            to_delete_sc.append(i)
+    # to_delete_sc = []
+    # for i, lab in enumerate(new_labels):
+    #     if "caudalmiddlefrontal" in lab:
+    #         to_delete_sc.append(i)
 
-    ts = np.delete(ts, to_delete_sc, 1)
-    new_labels = np.delete(new_labels, to_delete_sc)
+    # ts = np.delete(ts, to_delete_sc, 1)
+    # new_labels = np.delete(new_labels, to_delete_sc)
 
-    with open("resources/network_labels.pkl", "rb") as f:
-        network_labels = pickle.load(f)
-    to_delete_fc = []
-    for i, lab in enumerate(network_labels):
-        if not lab in new_labels:
-            to_delete_fc.append(i)
-    network_labels = np.delete(network_labels, to_delete_fc)
+    # with open("resources/network_labels.pkl", "rb") as f:
+    #     network_labels = pickle.load(f)
+    # to_delete_fc = []
+    # for i, lab in enumerate(network_labels):
+    #     if not lab in new_labels:
+    #         to_delete_fc.append(i)
+    # network_labels = np.delete(network_labels, to_delete_fc)
 
-    transform = {}
-    for i, lab in enumerate(network_labels):
-        transform[i] = np.where(new_labels == lab)
+    # transform = {}
+    # for i, lab in enumerate(network_labels):
+    #     transform[i] = np.where(new_labels == lab)
 
-    new_ts = np.zeros_like(ts)
-    for i in range(len(new_labels)):
-        new_ts[:, i] = ts[:, transform[i]].squeeze()
-    ts = new_ts
+    # new_ts = np.zeros_like(ts)
+    # for i in range(len(new_labels)):
+    #     new_ts[:, i] = ts[:, transform[i]].squeeze()
+    # ts = new_ts
 
     # ------------------------------------------------------
+
+    to_remove = []
+    for i, lab in enumerate(sc.region_labels):
+        if "caudalmiddlefrontal" in lab:
+            to_remove.append(i)
+    
+    ts = np.delete(ts, to_remove, axis=1)
 
     fc = np.corrcoef(ts, rowvar=False)
     fc[fc == 1] = 0.9999999
