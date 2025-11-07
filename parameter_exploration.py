@@ -18,6 +18,24 @@ def FCuCorrelation(FC1, FC2, fisher=True):
 with open("DK_SC/DK_SC.pkl", "rb") as f:
     sc = pickle.load(f)
 
+labels = sc.region_labels
+to_delete_ctx = []
+for i, lab in enumerate(labels):
+    if not lab.startswith('ctx-'):
+        to_delete_ctx.append(i)
+
+labels = np.delete(labels, to_delete_ctx)
+sc.region_labels = labels
+weights = sc.weights
+weights = np.delete(weights, to_delete_ctx, 0)
+weights = np.delete(weights, to_delete_ctx, 1)
+sc.weights = weights
+tls = sc.tract_lengths
+tls = np.delete(tls, to_delete_ctx, 0)
+tls = np.delete(tls, to_delete_ctx, 1)
+sc.tract_lengths = tls
+sc.configure()
+
 model = models.ReducedWongWangExcInh()
 
 sim = simulator.Simulator(
@@ -46,6 +64,13 @@ def explore(G, sigma, tau_e, tau_i, simulation_length=585e3, sim_dt=0.5, bold_pe
 
     offset = int(offset_time // bold_period)
     ts = boldd[offset:, 0, :, 0]
+    
+    # to_remove = []
+    # for i, lab in enumerate(sc.region_labels): # TODO: find out why it matters that its removed here and not afterwards
+    #     if "caudalmiddlefrontal" in lab:
+    #         to_remove.append(i)
+    
+    # ts = np.delete(ts, to_remove, axis=1)
 
     fc = np.corrcoef(ts, rowvar=False)
     fc[fc == 1] = 0.9999999

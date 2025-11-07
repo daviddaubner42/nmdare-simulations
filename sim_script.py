@@ -21,7 +21,6 @@ def get_config():
     cmd_parameters.append(["G", 1.0, float])
     cmd_parameters.append(["sigma", 0.01, float])
     cmd_parameters.append(["tau_e", 100.0, float])
-    cmd_parameters.append(["tau_i", 10.0, float])
 
     cmd_parameters.append(["sim_length", 600e3, float]) 
     cmd_parameters.append(["sim_dt", 0.5, float])
@@ -33,9 +32,6 @@ def get_config():
     config = parser.parse_args()
     return config
 
-def generate_filename(GC,sigma):
-    return f"G_{GC:.5f}_sigma_{sigma:.5f}.pkl"
-
 def run_simulation(config):
     tstart = timer()
     print("Hi! I'm a job with the following commandline parameters:")
@@ -44,18 +40,16 @@ def run_simulation(config):
     print(f"G = {config.G}")
     print(f"sigma = {config.sigma}")
     print(f"tau_e = {config.tau_e}")
-    print(f"tau_i = {config.tau_i}")
     print(f"Time is: {tstart}")
 
     # simulation code goes here
-    # print(f'run_simulation({config.G}, {config.sigma})')
-    # print(f'run_simulation({config.G}, {config.sigma})')
-    # part_fname = f"G_{config.G:.6f}_sigma_{config.sigma:.6f}_J_N_{config.J_N:.6f}_J_i_{config.J_i:.6f}"
+    print(f'run_simulation({config.G}, {config.sigma})')
     part_fname = f"G_{config.G}_sigma_{config.sigma}"
-    # part_fname = f"subid_tau_e_{config.tau_e}_tau_i_{config.tau_i}"
+    # print(f'run_simulation({config.tau_e})')
+    # part_fname = f"subid_tau_e_{config.tau_e}"
 
     fc = explore(
-        config.G, config.sigma, config.tau_e, config.tau_i,
+        config.G, config.sigma, config.tau_e,
         config.sim_length, config.sim_dt, 
         config.bold_period, config.offset_time
     )
@@ -64,11 +58,9 @@ def run_simulation(config):
         "G": config.G,
         "sigma": config.sigma,
         "tau_e": config.tau_e,
-        "tau_i": config.tau_i,
         "FC": fc
     }
 
-    # print(f'r = {r:.4f}')
     print(f'saving: RWW_result_{part_fname}')
     os.makedirs(f'out', exist_ok=True)
     with open(f'out/RWW_result_{part_fname}.pkl', 'wb') as f:
