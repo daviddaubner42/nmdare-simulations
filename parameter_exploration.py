@@ -21,7 +21,7 @@ with open("DK_SC/DK_SC.pkl", "rb") as f:
 labels = sc.region_labels
 to_delete_ctx = []
 for i, lab in enumerate(labels):
-    if not lab.startswith('ctx-'):
+    if not (lab.startswith('lh_') or lab.startswith('rh_')):
         to_delete_ctx.append(i)
 
 labels = np.delete(labels, to_delete_ctx)
@@ -44,14 +44,13 @@ sim = simulator.Simulator(
     coupling=coupling.Linear(a=np.array([1.])),
     integrator=integrators.HeunStochastic(dt=1),
     monitors=(monitors.Raw(), monitors.Bold(period=500)),
-    simulation_length=60e3
+    simulation_length=585e3
 ).configure()
 
-def explore(G, sigma, tau_e, tau_i, simulation_length=585e3, sim_dt=0.5, bold_period=2250, offset_time=60e3):
+def explore(G, sigma, tau_e, simulation_length=585e3, sim_dt=0.5, bold_period=2250, offset_time=60e3):
 
     sim.model.G = np.array([G])
     sim.model.tau_e = np.array([tau_e])
-    sim.model.tau_i = np.array([tau_i])
     sim.integrator.noise = noise.Additive(nsig=np.array([sigma]))
 
     sim.simulation_length = simulation_length
