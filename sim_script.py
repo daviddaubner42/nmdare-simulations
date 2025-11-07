@@ -51,8 +51,8 @@ def run_simulation(config):
     # print(f'run_simulation({config.G}, {config.sigma})')
     # print(f'run_simulation({config.G}, {config.sigma})')
     # part_fname = f"G_{config.G:.6f}_sigma_{config.sigma:.6f}_J_N_{config.J_N:.6f}_J_i_{config.J_i:.6f}"
-    part_fname = f"G_{config.G}_sigma_{config.sigma}"
-    # part_fname = f"subid_tau_e_{config.tau_e}_tau_i_{config.tau_i}"
+    # part_fname = f"G_{config.G}_sigma_{config.sigma}"
+    part_fname = f"subid_tau_e_{config.tau_e}_tau_i_{config.tau_i}"
 
     fc = explore(
         config.G, config.sigma, config.tau_e, config.tau_i,
