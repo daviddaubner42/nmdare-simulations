@@ -43,10 +43,10 @@ def run_simulation(config):
     print(f"Time is: {tstart}")
 
     # simulation code goes here
-    print(f'run_simulation({config.G}, {config.sigma})')
-    part_fname = f"G_{config.G}_sigma_{config.sigma}"
-    # print(f'run_simulation({config.tau_e})')
-    # part_fname = f"subid_tau_e_{config.tau_e}"
+    # print(f'run_simulation({config.G}, {config.sigma})')
+    # part_fname = f"G_{config.G}_sigma_{config.sigma}"
+    print(f'run_simulation({config.tau_e})')
+    part_fname = f"subid_tau_e_{config.tau_e}"
 
     fc = explore(
         config.G, config.sigma, config.tau_e,
